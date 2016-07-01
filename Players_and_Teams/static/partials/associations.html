@@ -1,0 +1,33 @@
+<style type="text/css">
+	table, th, td {
+		border: 1px solid black;
+		border-collapse: collapse;
+	}
+	th, td {
+	    padding: 5px;
+	    text-align: left;
+	}
+</style>
+<div ng-controller="associationsController as associationsCtrl">
+	<select ng-model="associationsCtrl.association.player">
+		<option ng-repeat='player in associationsCtrl.players'>{{player.name}}</option>
+	</select> 
+
+	<select ng-model="associationsCtrl.association.team">
+		<option ng-repeat='team in associationsCtrl.teams'>{{team.name}}</option>
+	</select>
+	
+	<button ng-click='associationsCtrl.assignPlayer()'>Assign Player to Team</button> <br><br>
+	<table>
+	  <tr>
+	    <th>Name</th>
+	    <th>Team</th>
+	    <th>Actions</th>
+	  </tr>
+	  <tr ng-repeat='player in associationsCtrl.players'>
+        <td>{{player.name}}</td>
+        <td>{{player.team}}</td>
+        <td><button ng-click='associationsCtrl.clearAssignment()'>Clear Assignment</button></td>
+	  </tr>
+	</table>
+</div>

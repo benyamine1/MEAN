@@ -1,0 +1,27 @@
+<style type="text/css">
+	table, th, td {
+		border: 1px solid black;
+		border-collapse: collapse;
+	}
+	th, td {
+	    padding: 5px;
+	    text-align: left;
+	}
+</style>
+<div ng-controller="teamsController as teamsCtrl">
+	<form>
+		Name: <input type='text' ng-model='teamsCtrl.newTeam.name'>
+		<input type='submit' value ='Add New Team' ng-click='teamsCtrl.addTeam()'>
+	</form>	
+
+	<table>
+	  <tr>
+	    <th>Name</th>
+	    <th>Actions</th>
+	  </tr>
+	  <tr ng-repeat='team in teamsCtrl.teams'>
+        <td>{{team.name}}</td>
+        <td><button ng-click='teamsCtrl.removeTeam()'>Remove Team</button></td>
+	  </tr>
+	</table>
+</div>

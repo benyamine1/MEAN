@@ -1,0 +1,153 @@
+<html ng-app='myApp'>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.5/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.5/angular-route.min.js"></script>
+    <script type='text/javascript'>
+    	var myApp = angular.module('myApp',['ngRoute']);
+
+        myApp.config(function ($routeProvider){
+            $routeProvider
+            .when('/',{
+                templateUrl:'partials/players.html'
+            })
+            .when('/teams',{
+                templateUrl:'partials/teams.html'
+            })
+            .when('/associations',{
+                templateUrl:'partials/associations.html'
+            })
+            .otherwise({
+                redirectTo:'/'
+            });
+        });
+
+    	myApp.factory('playerFactory', function(){
+            //(create a player, destroy a player)
+    		var factory={};
+    		factory.players=[];
+
+            factory.getPlayers = function (callback){
+                callback(factory.players);
+            }
+
+            factory.addPlayer = function (player, callback){
+                factory.players.push(player);
+                callback(factory.players);
+            }
+
+            factory.removePlayer = function ($index, callback){
+                factory.players.splice($index,1);
+                callback(factory.players);
+            }
+
+            factory.assignAssoc = function (association){
+                for (var i=0; i < factory.players.length; i++){
+                    if (factory.players[i].name == association.player){
+                        factory.players[i].team = association.team;
+
+                    }
+                }
+
+            }
+
+            factory.removeAssoc = function ($index){
+                factory.players.splice($index,1);
+            }
+
+
+            return factory;
+    	});
+
+        myApp.factory('teamFactory', function(){
+            //(create a team, destroy a team, create a player/team association)
+            var factory={};
+            factory.teams=[];
+
+            factory.getTeams = function (callback){
+                callback(factory.teams);
+            }
+
+            factory.addTeam = function (team, callback){
+                factory.teams.push(team);
+                callback(factory.teams);
+            }
+
+            factory.removeTeam = function ($index, callback){
+                factory.teams.splice($index,1);
+                callback(factory.teams);
+            }
+
+            return factory;
+        });
+
+        myApp.controller('playersController', function (playerFactory){
+            var self = this;
+            playerFactory.getPlayers(function (data){
+                self.players = data;
+            })
+
+            this.addPlayer = function(){
+                playerFactory.addPlayer(this.newPlayer, function (data){
+                    self.players = data;
+                });
+                this.newPlayer = "";
+            }
+
+            this.removePlayer = function($index){
+                playerFactory.removePlayer($index, function (data){
+                    self.players = data;
+                })
+            }
+        });
+
+    	myApp.controller('teamsController', function (teamFactory){
+            var self = this;
+            teamFactory.getTeams(function (data){
+                self.teams = data;
+            })
+
+            this.addTeam = function (){
+                teamFactory.addTeam(this.newTeam, function (data){
+                    self.teams = data;
+                });
+                this.newTeam = "";
+            }
+
+            this.removeTeam = function ($index){
+                teamFactory.removeTeam($index, function (data){
+                    self.teams = data;
+                })
+            }
+
+    	});
+
+        myApp.controller('associationsController', function (playerFactory, teamFactory){
+            var self = this;
+            playerFactory.getPlayers(function (data){
+                self.players = data;
+            })
+
+            teamFactory.getTeams(function (data){
+                self.teams = data;
+            })
+
+            this.assignPlayer = function (){
+                playerFactory.assignAssoc(this.association, function (data){
+                    self.players = data;
+                });
+            }
+
+            this.clearAssignment = function ($index){
+                playerFactory.removeAssoc($index, function (data){
+                    self.players = data;
+                })
+            }
+        });
+    </script>
+</head>
+<body>
+    <a href="#/players">Players</a> | <a href="#/teams">Teams</a> | <a href="#/associations">Associations</a> <br><br><br>
+
+    <div ng-view=""></div>
+</body>
+</html>
